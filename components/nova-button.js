@@ -7,9 +7,10 @@ class NovaButton extends HTMLElement {
     const label = this.getAttribute("label") || "Click Me";
     const animated = this.hasAttribute("hover-animated");
     const disabled = this.hasAttribute("disabled");
-    const customColor = this.getAttribute("color");
-    const textColor = this.getAttribute("text-color");
-    const size = this.getAttribute("size") || "m";
+    const customColor = this.getAttribute("color") || "#6366f1";
+    const textColor = this.getAttribute("text-color") || "#ffffff";
+    const size = this.getAttribute("size") || "medium";
+    const variant = this.getAttribute("variant") || "solid";
     const clickAnimated = !this.hasAttribute("noclick-animated");
 
    
@@ -18,23 +19,20 @@ class NovaButton extends HTMLElement {
     btn.disabled = disabled;
 
     btn.style.cssText = `
-      padding: 12px 20px;
-      border-radius: 6px;
-      background: #6366f1;
-      color: white;
       border: none;
       cursor: pointer;
       font-size: 16px;
       transition: all 0.3s ease;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      margin: 2px;
     `;
 
     const sizeMap = {
-      s: { padding: "6px 12px", font: "12px", radius: "4px" },
-      m: { padding: "10px 18px", font: "14px", radius: "6px" },
-      l: { padding: "14px 22px", font: "16px", radius: "8px" },
-      xl: { padding: "18px 26px", font: "18px", radius: "10px" },
-      xxl: { padding: "22px 32px", font: "22px", radius: "12px" }
+      small: { padding: "6px 12px", font: "12px", radius: "4px" },
+      medium: { padding: "10px 18px", font: "14px", radius: "6px" },
+      large: { padding: "14px 22px", font: "16px", radius: "8px" },
+      xlarge: { padding: "18px 26px", font: "18px", radius: "10px" },
+      xxlarge: { padding: "22px 32px", font: "22px", radius: "12px" }
     };
     const selected = sizeMap[size] || sizeMap.m;
 
@@ -42,7 +40,28 @@ class NovaButton extends HTMLElement {
     btn.style.fontSize = selected.font;
     btn.style.borderRadius = selected.radius;
 
-    if(customColor){
+    const mainColor  = customColor || "#6366f1";
+    const text = textColor || "#ffffff";
+
+    if (variant === "solid") {
+      btn.style.background = mainColor;
+      btn.style.color = text;
+      btn.style.border = "none";
+    }
+    if (variant === "outline") {
+      btn.style.background = "transparent";
+      btn.style.border = `2px solid ${mainColor}`;
+      btn.style.color = mainColor;
+      btn.style.boxShadow = "none";
+    } 
+    if (variant === "ghost") {
+      btn.style.background = "transparent";
+      btn.style.border = "none";
+      btn.style.color = mainColor;
+      btn.style.boxShadow = "none";
+    }
+
+    if(customColor && variant === "solid"){
       btn.style.background = customColor;
     }
 
