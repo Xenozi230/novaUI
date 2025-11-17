@@ -2,11 +2,12 @@ class NovaButton extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+
+    this._disabled = this.hasAttribute("disabled");
   }
   connectedCallback() {
     const label = this.getAttribute("label") || "Click Me";
     const animated = this.hasAttribute("hover-animated");
-    const disabled = this.hasAttribute("disabled");
     const customColor = this.getAttribute("color") || "#6366f1";
     const textColor = this.getAttribute("text-color") || "#ffffff";
     const size = this.getAttribute("size") || "medium";
@@ -16,15 +17,15 @@ class NovaButton extends HTMLElement {
    
     const btn = document.createElement("button");
     btn.textContent = label;
-    btn.disabled = disabled;
 
     btn.style.cssText = `
       border: none;
-      cursor: pointer;
+      cursor: ${this._disabled ? "not-allowed" : "pointer"};
       font-size: 16px;
       transition: all 0.3s ease;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       margin: 2px;
+      ${this._disabled ? "opacity: 0.6;" : ""}
     `;
 
     const sizeMap = {
@@ -88,9 +89,13 @@ class NovaButton extends HTMLElement {
       });
     }
 
+    
+
     btn.addEventListener("click", () => {
       this.dispatchEvent(new CustomEvent("nova-click", { bubbles: true}));
     });
+    
+    
 
     this.shadowRoot.appendChild(btn);
   }
