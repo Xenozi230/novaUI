@@ -12,12 +12,17 @@ class NovaCheckbox extends HTMLElement {
     const color = this.getAttribute("color") || "#6366f1";
     this._textColor = this.getAttribute("text-color") || "#000000";
     
-
     const sizeMap = {
       small: "14px",
       medium: "18px",
       large: "22px",
       xlarge: "26px"
+    };
+    const textSizeMap = {
+      small: "12px",
+      medium: "14px",
+      large: "16px",
+      xlarge: "18px"
     };
     const boxSize = sizeMap[size] || sizeMap.m;
 
@@ -47,6 +52,7 @@ class NovaCheckbox extends HTMLElement {
     const text = document.createElement("span");
     text.textContent = this.getAttribute("label") || "";
     text.style.color = this._textColor;
+    text.style.fontSize = textSizeMap[size] || "14px";
 
     wrapper.appendChild(box);
     if (label) wrapper.appendChild(text);
