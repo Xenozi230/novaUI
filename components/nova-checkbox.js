@@ -36,6 +36,7 @@ class NovaCheckbox extends HTMLElement {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                margin: 2px;
                 }
 
                 .label {

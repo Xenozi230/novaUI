@@ -45,7 +45,7 @@ It is lightweight, fast, and works everywhere.
 
 ### `<nova-card>`
 
-* `title` : titre de la carte
+* `title` : title of the card 
 * `title-align` : One of: `left` , `center` , `right`
 * `title-size` : Font-size for the title
 * `title-color` : Text color of the title
@@ -59,10 +59,16 @@ It is lightweight, fast, and works everywhere.
 
 ### `<nova-toggle>`
 
-*
-*
-*
-*
+* `label` : Text next to the toggle
+* `checked` : Starts toggle on 
+* `color` : Change toggle colors
+* `text-color` : Label text color
+* `size` : One of: `small` , `medium` , `large` , `xlarge`
+* `disabled` : Prevents interaction 
+### Example
+```html
+<nova-toggle label="Enable notifications" color="green" size="large" disabled></nova-toggle>
+```
 
 ## 🔨 Build System
 
