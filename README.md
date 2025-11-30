@@ -10,6 +10,7 @@ It is lightweight, fast, and works everywhere.
 * `<nova-button>`
 * `<nova-checkbox>`
 * `<nova-card>`
+* `<nova-toggle>`
 
 
 ## 🛠️ Attributes
@@ -36,7 +37,7 @@ It is lightweight, fast, and works everywhere.
 * `color` : Check fill color
 * `text-color` : Label text color
 * `size` : One of: `small` , `medium` , `large` , `xlarge`
-* `disabled` : Prevents interaction
+* (Coming Soon) `disabled` : Prevents interaction 
 ### Example
 ```html
 <nova-checkbox label="Check me" color="#6366f1" text-color="#000" size="medium"></nova-checkbox>
@@ -55,6 +56,13 @@ It is lightweight, fast, and works everywhere.
   Card content
 </nova-card>
 ```
+
+### `<nova-toggle>`
+
+*
+*
+*
+*
 
 ## 🔨 Build System
 

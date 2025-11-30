@@ -89,14 +89,10 @@ class NovaButton extends HTMLElement {
       });
     }
 
-    
-
     btn.addEventListener("click", () => {
       this.dispatchEvent(new CustomEvent("nova-click", { bubbles: true}));
     });
-    
-    
-
+  
     this.shadowRoot.appendChild(btn);
   }
 }
