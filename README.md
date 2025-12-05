@@ -70,6 +70,18 @@ It is lightweight, fast, and works everywhere.
 <nova-toggle label="Enable notifications" color="green" size="large" disabled></nova-toggle>
 ```
 
+### `<nova-loading>`
+
+* `variant` : Different variant of the loading `spinner` , `dots` 
+* `thickness` : Thickness only for the spinner
+* `speed` : Increases or decreases the speed of the spinner
+* `size` : One of: `small` , `medium` , `large` , `xlarge`
+* `color` : Change loading colors
+### Example
+```html
+<nova-spinner variant="dots" color="red" speed="0.8s"></nova-spinner>
+```
+
 ## 🔨 Build System
 
 NovaUI uses a small custom builder to merge all component files into a single output bundle.
