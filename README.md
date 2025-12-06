@@ -5,12 +5,14 @@ A lightweight, modern Web Components UI library — no frameworks required.
 NovaUI provides customizable UI elements such as buttons, checkboxes ... 
 It is lightweight, fast, and works everywhere.
 
-## ✨ Composants disponibles
+## ✨ Available components
 
 * `<nova-button>`
 * `<nova-checkbox>`
 * `<nova-card>`
 * `<nova-toggle>`
+* `<nova-loading>`
+* `<nova-step>`
 
 
 ## 🛠️ Attributes
