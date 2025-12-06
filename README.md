@@ -71,7 +71,6 @@ It is lightweight, fast, and works everywhere.
 ```
 
 ### `<nova-loading>`
-
 * `variant` : Different variant of the loading `spinner` , `dots` 
 * `thickness` : Thickness only for the spinner
 * `speed` : Increases or decreases the speed of the spinner
@@ -81,6 +80,25 @@ It is lightweight, fast, and works everywhere.
 ```html
 <nova-spinner variant="dots" color="red" speed="0.8s"></nova-spinner>
 ```
+
+### `<nova-step>`
+
+* `label` : Text displayed below the step circle
+* `current` : Indicates the currently active step
+* `size` : Size of all steps. Options: `small` , `medium` , `large` , `xlarge`
+* `color` : Color of the active step. Applied to all steps
+* `done-color` : Color of completed steps. Applied to all steps
+* `text-color` : Color of the step labels. Applied to all steps
+* `data-content` : Overrides the automatic step number with custom content inside the circle
+### Example
+```html
+<nova-steps current="2" size="large" color="#f59e0b" done-color="#10b981" text-color="#111">
+    <nova-step label="Step 1"></nova-step>
+    <nova-step label="Step 2" data-content="✓"></nova-step>
+    <nova-step label="Step 3"></nova-step>
+</nova-steps>
+```
+
 
 ## 🔨 Build System
 
