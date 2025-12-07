@@ -13,6 +13,8 @@ It is lightweight, fast, and works everywhere.
 * `<nova-toggle>`
 * `<nova-loading>`
 * `<nova-step>`
+* `<nova-progressbar>`
+* `<nova-radialprogress>`
 
 
 ## 🛠️ Attributes
@@ -84,7 +86,6 @@ It is lightweight, fast, and works everywhere.
 ```
 
 ### `<nova-step>`
-
 * `label` : Text displayed below the step circle
 * `current` : Indicates the currently active step
 * `size` : Size of all steps. Options: `small` , `medium` , `large` , `xlarge`
@@ -101,6 +102,29 @@ It is lightweight, fast, and works everywhere.
 </nova-steps>
 ```
 
+### `<nova-progressbar>`
+* `value` : Current progress value
+* `max` : Maximum value (default: 100)
+* `color` : Color of the filled progress bar
+* `bg` : Background color of the bar
+* `height` : Height of the bar
+* `show-percent` : Displays the percentage below the bar
+* `percent-color` : Color of the percentage text
+### Example
+```html
+<nova-progressbar value="45" max="100" color="#6366f1" bg="#e5e7eb" height="15px" show-percent></nova-progressbar>
+```
+### `<nova-radialprogress>`
+* `value` : Current progress value
+* `max` : Maximum value (default: 100)
+* `stroke` : Thickness of the progress stroke
+* `color` : Color of the circular progress
+* `bg` : Background track color
+* `text-color`: Color of the percentage text
+### Example
+```html
+<nova-radialprogress value="45" max="100" color="#6366f1" bg="#e5e7eb" stroke="12"></nova-radialprogress>
+```
 
 ## 🔨 Build System
 

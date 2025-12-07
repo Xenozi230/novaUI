@@ -436,6 +436,192 @@ class NovaSpinner extends HTMLElement {
 customElements.define("nova-spinner", NovaSpinner);
 
 
+// --- nova-progressbar.js ---
+class NovaProgressBar extends HTMLElement {
+    static get observedAttributes() { 
+        return ["value", "max", "color", "height", "show-percent", "percent-color","bg"]; 
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: block;
+                    width: 100%;
+                    --progress-color: #6366f1;
+                    --progress-height: 16px;
+                    --percent-color: #111;
+                    --progress-bg: #dddddfff;
+                    margin-bottom: 8px;
+                }
+                .bar-container {
+                    width: 100%;
+                    background: var(--progress-bg);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    height: var(--progress-height);
+                }
+                .bar-fill {
+                    width: 0%;
+                    height: 100%;
+                    background: var(--progress-color);
+                    transition: width 0.3s ease;
+                    border-radius: 8px;
+                }
+                .percent {
+                    text-align: center;
+                    margin-top: 4px;
+                    color: var(--percent-color);
+                    font-size: 0.9em;
+                }
+            </style>
+            <div class="bar-container">
+                <div class="bar-fill"></div>
+            </div>
+            <div class="percent" style="display:none">0%</div>
+        `;
+    }
+
+    connectedCallback() { this.update(); }
+    attributeChangedCallback(name, oldValue, newValue) { if(oldValue !== newValue) this.update(); }
+
+    update() {
+        const fill = this.shadowRoot.querySelector(".bar-fill");
+        const percentText = this.shadowRoot.querySelector(".percent");
+
+        const value = parseFloat(this.getAttribute("value")) || 0;
+        const max = parseFloat(this.getAttribute("max")) || 100;
+        const percent = Math.min(100, (value / max) * 100);
+        fill.style.width = percent + "%";
+        
+        if (this.hasAttribute("color")) this.style.setProperty("--progress-color", this.getAttribute("color"));
+        if (this.hasAttribute("height")) this.style.setProperty("--progress-height", this.getAttribute("height"));
+        if (this.hasAttribute("bg")) this.style.setProperty("--progress-bg", this.getAttribute("bg"));
+
+        if (this.hasAttribute("show-percent")) {
+            percentText.style.display = "block";
+            percentText.textContent = Math.round(percent) + "%";
+            if (this.hasAttribute("percent-color")) {
+                this.style.setProperty("--percent-color", this.getAttribute("percent-color"));
+            }
+        } else {
+            percentText.style.display = "none";
+        }
+    }
+}
+
+customElements.define("nova-progressbar", NovaProgressBar);
+
+
+// --- nova-radialprogress.js ---
+class NovaRadialProgress extends HTMLElement {
+    static get observedAttributes() {
+        return ["value", "max", "size", "color", "bg", "stroke", "text-color"];
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    --size: 120px;
+                    --progress-color: #6366f1;
+                    --bg-color: #000000ff;
+                    --stroke-width: 10;
+                    --text-color: #111827;
+                    display: inline-block;
+                }
+
+                .wrapper {
+                    position: relative;
+                    width: var(--size);
+                    height: var(--size);
+                }
+
+                svg {
+                    transform: rotate(-90deg);
+                    width: 100%;
+                    height: 100%;
+                }
+
+                circle {
+                    fill: none;
+                    stroke-width: var(--stroke-width);
+                    stroke-linecap: round;
+                }
+
+                .percent {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: calc(var(--size) * 0.22);
+                    font-weight: bold;
+                    font-family: sans-serif;
+                    color: var(--text-color);
+                }
+            </style>
+
+            <div class="wrapper">
+                <svg>
+                    <circle class="bg"></circle>
+                    <circle class="progress"></circle>
+                </svg>
+                <div class="percent">0%</div>
+            </div>
+        `;
+    }
+
+    connectedCallback() { this.update(); }
+    attributeChangedCallback() { this.update(); }
+
+    update() {
+        const value = parseFloat(this.getAttribute("value")) || 0;
+        const max = parseFloat(this.getAttribute("max")) || 100;
+        const percent = Math.min(100, (value / max) * 100);
+
+        const size = this.getAttribute("size") || "120px";
+        const color = this.getAttribute("color") || "#6366f1";
+        const bg = this.getAttribute("bg") || "#dddddfff";
+        const stroke = this.getAttribute("stroke") || 10;
+        const textColor = this.getAttribute("text-color") || "#111827";
+
+        this.style.setProperty("--size", size);
+        this.style.setProperty("--progress-color", color);
+        this.style.setProperty("--bg-color", bg);
+        this.style.setProperty("--stroke-width", stroke);
+        this.style.setProperty("--text-color", textColor);
+
+        const radius = (parseInt(size) / 2) - stroke;
+        const circumference = radius * 2 * Math.PI;
+
+        const svg = this.shadowRoot.querySelector("svg");
+        const bgCircle = this.shadowRoot.querySelector(".bg");
+        const progressCircle = this.shadowRoot.querySelector(".progress");
+        const percentLabel = this.shadowRoot.querySelector(".percent");
+
+        bgCircle.setAttribute("cx", size.replace("px", "") / 2);
+        bgCircle.setAttribute("cy", size.replace("px", "") / 2);
+        bgCircle.setAttribute("r", radius);
+        bgCircle.style.stroke = bg;
+
+        progressCircle.setAttribute("cx", size.replace("px", "") / 2);
+        progressCircle.setAttribute("cy", size.replace("px", "") / 2);
+        progressCircle.setAttribute("r", radius);
+        progressCircle.style.stroke = color;
+        progressCircle.style.strokeDasharray = circumference;
+        progressCircle.style.strokeDashoffset = circumference - (percent / 100) * circumference;
+
+        percentLabel.textContent = Math.round(percent) + "%";
+    }
+}
+
+customElements.define("nova-radialprogress", NovaRadialProgress);
+
+
 // --- nova-step.js ---
 class NovaStep extends HTMLElement {
     static get observedAttributes() {
