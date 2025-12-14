@@ -1,6 +1,138 @@
 // AUTO-GENERATED NOVAUI
 
 
+// --- nova-badge.js ---
+class NovaBadge extends HTMLElement {
+    static get observedAttributes() {
+        return ["label", "color", "size", "icon", "bg", "rounded", "variant"];
+    }
+    
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    --bg-color: #6366f1;
+                    --text-color: #111;
+                    --border-color: #6366f1;
+                    display: inline-block;
+                    font-family: system-ui, sans-serif;
+                }
+                .badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 4px 10px;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    border-radius: 8px;
+                    border: 1px solid var(--border-color);
+                    background: var(--bg-color);
+                    color: var(--text-color);
+                    transition: all 0.2s ease;
+                    white-space: nowrap;
+                    margin: 4px;
+                    margin-top: 5px;
+                }
+
+                .small { font-size: 0.65rem; padding: 2px 8px; }
+                .medium { font-size: 0.75rem; }
+                .large { font-size: 0.85rem; padding: 6px 12px; }
+                .xlarge { font-size: 1rem; padding: 8px 16px; }
+
+                .solid {
+                    background: var(--bg-color);
+                }
+                .outline {
+                    background: transparent;
+                    border-color: var(--border-color);
+                }
+
+                .soft {
+                    background: color-mix(in srgb, var(--bg-color) 20%, transparent);
+                    border-color: transparent;
+                }
+
+                .rounded {
+                    border-radius: 999px;
+                }
+
+                .icon {
+                    display: none;
+                    line-height: 1;
+                    font-size: 1em;
+                }
+
+                .has-icon .icon {
+                    display: inline-flex;
+                }
+                .icon-only {
+                    padding: 6px;
+                    justify-content: center;
+                    gap: 0;
+                }
+            </style>
+
+            <span class="badge medium">
+                <span class="icon"></span>
+                <span class="label"></span>
+                <slot hidden></slot>
+            </span>
+        `;
+    }
+    connectedCallback() {
+        this.update();
+    }
+
+    attributeChangedCallback() {
+        this.update();
+    }
+
+    update() {
+        const badge = this.shadowRoot.querySelector(".badge");
+        const labelEl = this.shadowRoot.querySelector(".label");
+        const iconEl = this.shadowRoot.querySelector(".icon");
+        const slot = this.shadowRoot.querySelector("slot");
+
+        badge.className = "badge";
+        badge.classList.add(this.getAttribute("size") || "medium");
+        badge.classList.add(this.getAttribute("variant") || "solid");
+        if (this.getAttribute("rounded")) {
+            badge.classList.add("rounded");
+        }
+        const hasIcon = this.hasAttribute("icon");
+        if (hasIcon) {
+            badge.classList.add("has-icon");
+            iconEl.textContent = this.getAttribute("icon");
+        } else {
+            iconEl.textContent = "";
+        }
+        const hasLabel =
+            this.hasAttribute("label") || this.textContent.trim().length > 0;
+
+        if (this.hasAttribute("label")) {
+            labelEl.textContent = this.getAttribute("label");
+            slot.hidden = true;
+        } else {
+            labelEl.textContent = "";
+            slot.hidden = false;
+        }
+        if (hasIcon && !hasLabel) {
+            badge.classList.add("icon-only", "rounded");
+        }
+        if (this.getAttribute("bg")) {
+            this.style.setProperty("--bg-color",this.getAttribute("bg"));
+        }
+        if (this.getAttribute("color")) {
+            this.style.setProperty("--text-color",this.getAttribute("color"));
+            this.style.setProperty("--border-color",this.getAttribute("color"));
+        }
+    }
+
+}
+customElements.define("nova-badge", NovaBadge);
+
 // --- nova-button.js ---
 class NovaButton extends HTMLElement {
   constructor() {
@@ -291,6 +423,144 @@ class NovaCheckbox extends HTMLElement {
     }
 }
 customElements.define("nova-checkbox", NovaCheckbox);
+
+// --- nova-input.js ---
+class NovaInput extends HTMLElement {
+    static get observedAttributes() {
+        return ["value", "placeholder", "type", "color", "icon", "error", "disabled", "bg", "size"];
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-block;
+                    width: auto;
+
+                    --border-color: #d1d5db;
+                    --focus-color: #6366f1;
+                    --error-color: #ef4444;
+                    --bg-color: #fff;
+
+                    font-family: system-ui, sans-serif;
+                }
+
+                /* 🎯 Taille dynamique */
+                .input-wrapper.small     { padding: 4px 8px;  font-size: 0.8rem;  border-radius: 8px;  min-width: 140px; }
+                .input-wrapper.medium    { padding: 6px 10px; font-size: 0.95rem; border-radius: 10px; min-width: 180px; }
+                .input-wrapper.large     { padding: 8px 12px; font-size: 1rem;    border-radius: 12px; min-width: 220px; }
+                .input-wrapper.xlarge    { padding: 10px 14px; font-size: 1.1rem; border-radius: 14px; min-width: 260px; }
+                .input-wrapper.xxlarge   { padding: 12px 16px; font-size: 1.2rem; border-radius: 16px; min-width: 300px; }
+
+                .input-wrapper {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+
+                    background: var(--bg-color);
+                    border: 2px solid var(--border-color);
+                    gap: 6px;
+
+                    transition: all 0.2s ease;
+                }
+
+                .input-wrapper:hover {
+                    border-color: #bfc4ce;
+                }
+
+                .input-wrapper:focus-within {
+                    border-color: var(--focus-color);
+                    box-shadow: 0 0 4px var(--focus-color);
+                }
+
+                .icon {
+                    font-size: 1.1rem;
+                    opacity: 0.7;
+                    user-select: none;
+                }
+
+                input {
+                    flex: 1;
+                    border: none;
+                    outline: none;
+                    background: transparent;
+                }
+
+                input.error {
+                    color: var(--error-color);
+                }
+
+                .input-wrapper.error {
+                    border-color: var(--error-color);
+                    box-shadow: 0 0 4px var(--error-color);
+                }
+
+                .input-wrapper.disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            </style>
+
+            <div class="input-wrapper medium">
+                <span class="icon" style="display:none"></span>
+                <input />
+            </div>
+        `;
+    }
+
+    connectedCallback() {
+        this.render();
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) this.render();
+    }
+
+    render() {
+        const wrapper = this.shadowRoot.querySelector(".input-wrapper");
+        const input = this.shadowRoot.querySelector("input");
+        const iconEl = this.shadowRoot.querySelector(".icon");
+
+        wrapper.classList.remove("small", "medium", "large", "xlarge", "xxlarge");
+
+        const size = this.getAttribute("size") || "medium";
+        wrapper.classList.add(size);
+
+        if (this.hasAttribute("value")) input.value = this.getAttribute("value");
+        if (this.hasAttribute("placeholder")) input.placeholder = this.getAttribute("placeholder");
+        input.type = this.getAttribute("type") || "text";
+        if (this.hasAttribute("disabled")) {
+            input.disabled = true;
+            wrapper.classList.add("disabled");
+        } else {
+            input.disabled = false;
+            wrapper.classList.remove("disabled");
+        }
+        if (this.hasAttribute("bg")) {
+            this.style.setProperty("--bg-color", this.getAttribute("bg"));
+        }
+        if (this.hasAttribute("color")) {
+            this.style.setProperty("--focus-color", this.getAttribute("color"));
+        }
+        if (this.hasAttribute("error")) {
+            wrapper.classList.add("error");
+            input.classList.add("error");
+        } else {
+            wrapper.classList.remove("error");
+            input.classList.remove("error");
+        }
+        if (this.hasAttribute("icon")) {
+            iconEl.style.display = "block";
+            iconEl.textContent = this.getAttribute("icon");
+        } else {
+            iconEl.style.display = "none";
+        }
+    }
+}
+customElements.define("nova-input", NovaInput);
+
 
 // --- nova-loading.js ---
 class NovaSpinner extends HTMLElement {
@@ -620,6 +890,110 @@ class NovaRadialProgress extends HTMLElement {
 }
 
 customElements.define("nova-radialprogress", NovaRadialProgress);
+
+
+// --- nova-slider.js ---
+class NovaSlider extends HTMLElement {
+    static get observedAttributes() {
+        return ["min", "max", "value", "step", "color", "track-color", "size", "disabled", "show-value"];
+    }
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-block;
+                    width: 200px;
+                    --track-color: #e5e7eb;
+                    --thumb-color: #6366f1;
+                    --height: 6px;
+                }
+
+                input[type="range"] {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: var(--height);
+                    background: var(--track-color);
+                    border-radius: 4px;
+                    outline: none;
+                    cursor: pointer;
+                    transition: background 0.2s;
+                }
+
+                input[type="range"]:disabled {
+                    cursor: not-allowed;
+                    opacity: 0.6;
+                }
+
+                input[type="range"]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background: var(--thumb-color);
+                    border: none;
+                    cursor: pointer;
+                }
+
+                .value-display {
+                    text-align: center;
+                    margin-top: 4px;
+                    font-size: 0.85em;
+                    color: var(--thumb-color);
+                    display: none;
+                }
+            </style>
+            <input type="range" />
+            <div class="value-display">0</div>
+        `;
+    }
+
+    connectedCallback() {
+        this.update();
+        this.shadowRoot.querySelector("input").addEventListener("input", e => {
+            this.setAttribute("value", e.target.value);
+            this.updateValueDisplay();
+            this.dispatchEvent(new CustomEvent("change", { detail: { value: e.target.value } }));
+        });
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) this.update();
+    }
+
+    update() {
+        const slider = this.shadowRoot.querySelector("input");
+        slider.min = this.getAttribute("min") || 0;
+        slider.max = this.getAttribute("max") || 100;
+        slider.value = this.getAttribute("value") || 0;
+        slider.step = this.getAttribute("step") || 1;
+        slider.disabled = this.hasAttribute("disabled");
+
+        if (this.hasAttribute("color")) this.style.setProperty("--thumb-color", this.getAttribute("color"));
+        if (this.hasAttribute("track-color")) this.style.setProperty("--track-color", this.getAttribute("track-color"));
+
+        const size = this.getAttribute("size") || "medium";
+        const heights = { small: "4px", medium: "6px", large: "8px", xlarge: "10px" };
+        this.style.setProperty("--height", heights[size] || "6px");
+
+        this.updateValueDisplay();
+    }
+
+    updateValueDisplay() {
+        const valueDisplay = this.shadowRoot.querySelector(".value-display");
+        const slider = this.shadowRoot.querySelector("input");
+        if (this.hasAttribute("show-value")) {
+            valueDisplay.style.display = "block";
+            valueDisplay.textContent = slider.value;
+        } else {
+            valueDisplay.style.display = "none";
+        }
+    }
+}
+
+customElements.define("nova-slider", NovaSlider);
 
 
 // --- nova-step.js ---

@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 0.3.0 (2025-12-14)
+### New Components
+* Added `<nova-input>`: configurable text input with `placeholder`, `value`, `type`, `icon`, `color`, `bg`, `size`, `error`, and `disabled` attributes.
+* Added `<nova-badge>`: badge component with `label`, `icon`, `color`, `bg`, `size`, `rounded`, and `variant` attributes.
+* Added `<nova-slider>`: range slider with `min`, `max`, `value`, `step`, `color`, `track-color`, `size`, `disabled`, and `show-value` attributes.
+
 ## 0.2.0 (2025-12-07)
 ### New Components
 * Added `<nova-progressbar>`: horizontal progress bar with `value`, `max`, `color`, `bg`, `height`, `show-percent`, and `percent-color` attributes.

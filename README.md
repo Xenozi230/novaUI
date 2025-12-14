@@ -15,7 +15,9 @@ It is lightweight, fast, and works everywhere.
 * `<nova-step>`
 * `<nova-progressbar>`
 * `<nova-radialprogress>`
-
+* `<nova-input>`
+* `<nova-badge>`
+* `<nova-slider>`
 
 ## 🛠️ Attributes
 
@@ -124,6 +126,46 @@ It is lightweight, fast, and works everywhere.
 ### Example
 ```html
 <nova-radialprogress value="45" max="100" color="#6366f1" bg="#e5e7eb" stroke="12"></nova-radialprogress>
+```
+### `<nova-input>`
+* `placeholder` : Text to display when the input is empty
+* `value` : Current value of the field
+* `type` : Input type Options: `text` , `password` , `email` , `number`
+* `icon` : Icon placed to the left of the field
+* `color` : Border and shadow color when in focus.
+* `bg` : Background color of the field.
+* `size` : Defines the input size Options: `small` , `medium` , `large` , `xlarge`
+* `error` : Displays the field in error mode
+* `disabled` : Disable the input
+### Example
+```html
+<nova-input placeholder="Password" type="Password" size="small" color="red"></nova-input>
+```
+### `<nova-badge>`
+* `label` : Text displayed inside the badge
+* `icon` : Icon displayed inside the badge
+* `color` : Color of the border
+* `bg` : Background color of the badge
+* `size` : Size of the badge. Options: `small` , `medium` , `large` , `xlarge`
+* `rounded` : If present, makes the badge fully rounded
+* `variant` : Style variant of the badge. Options: `solid` , `outline` , `ghost`
+### Example
+```html
+<nova-badge label="New" variant="outline" size="small" icon="⭐"></nova-badge>
+```
+### `<nova-slider>`
+* `min` : Minimum value of the slider (default: 0)
+* `max` : Maximum value of the slider (default: 100)
+* `value` : Current value of the slider
+* `step` : Step increment/decrement (default: 1)
+* `color` : Color of the slider thumb
+* `track-color` : Color of the slider track
+* `size` : Slider height size. Options: `small` , `medium` , `large` , `xlarge`
+* `show-value` : Display the current value below the slider
+* `disabled` : Disables the slider
+### Example
+```html
+<nova-slider min="0" max="100" value="50" step="1" show-value></nova-slider>
 ```
 
 ## 🔨 Build System
