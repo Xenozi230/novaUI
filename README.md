@@ -5,6 +5,16 @@ A lightweight, modern Web Components UI library — no frameworks required.
 NovaUI provides customizable UI elements such as buttons, checkboxes ... 
 It is lightweight, fast, and works everywhere.
 
+## ⚖️ License
+
+Nova UI is released under a dual license:
+
+- **Non-Commercial License** – Free for personal, educational, or non-commercial projects.  
+  See [`LICENSES/LICENSE-NONCOMMERCIAL.txt`](./LICENSES/NOCOMMERCIAL-LICENSE.md)
+
+- **Commercial License** – Required for commercial use.   
+  See [`LICENSES/LICENSE-COMMERCIAL.txt`](./LICENSES/COMMERCIAL-LICENSE.md)
+
 ## ✨ Available components
 
 * `<nova-button>`
@@ -168,25 +178,5 @@ It is lightweight, fast, and works everywhere.
 <nova-slider min="0" max="100" value="50" step="1" show-value></nova-slider>
 ```
 
-## 🔨 Build System
 
-NovaUI uses a small custom builder to merge all component files into a single output bundle.
 
-```bash
-node builder.js
-```
-### The script:
- - Reads all `.js` files from `/components`
- - Generates `dist/nova-ui.js`
- - Creates `/dist` automatically if missing
-
-## 🧪 Development
-
-### To add a new component:
-  - Create a `.js` files in `/components`
-  - Define your Web Component
-  - Run :
-  ```bash
-  node builder.js
-  ```
-Your new component will be included in `dist/nova-ui.js`

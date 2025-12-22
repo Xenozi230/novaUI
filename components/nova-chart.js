@@ -1,3 +1,22 @@
+/*! 
+* Nova UI 
+* © 2025 Xenozi230
+*
+* License: Dual License 
+* 
+* 1. Non-Commercial Use: 
+* Free to use for personal, educational, or non-commercial projects. 
+* You may copy, modify, and distribute the code for non-commercial purposes. 
+* See NOCOMMERCIAL-LICENSE.md for more details.
+*
+* 2. Commercial Use: 
+* A commercial license is required for any use in commercial projects, 
+* including selling, integrating in a product, or any revenue-generating use. 
+* See COMMERCIAL-LICENSE.md for more details and purchasing a commercial license.
+* 
+* Full license text in LICENSES folder 
+*/
+
 class NovaChart extends HTMLElement {
   constructor() {
     super();
