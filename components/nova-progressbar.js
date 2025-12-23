@@ -18,22 +18,48 @@
 */
 
 class NovaProgressBar extends HTMLElement {
-    static get observedAttributes() { 
-        return ["value", "max", "color", "height", "show-percent", "percent-color","bg"]; 
-    }
-
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
+
+        this._value = parseFloat(this.getAttribute("value")) || 0;
+        this._max = parseFloat(this.getAttribute("max")) || 100;
+        this._color = this.getAttribute("color") || "#6366f1";
+        this._height = this.getAttribute("height") || "16px";
+        this._showPercent = this.hasAttribute("show-percent");
+        this._percentColor = this.getAttribute("percent-color") || "#111";
+        this._bg = this.getAttribute("bg") || "#dddddfff";
+    }
+    static get observedAttributes() { 
+        return ["value", "max", "color", "height", "show-percent", "percent-color","bg"]; 
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "value") this._value = parseFloat(newVal) || 0;
+        if (name === "max") this._max = parseFloat(newVal) || 100;
+        if (name === "color") this._color = newVal;
+        if (name === "height") this._height = newVal;
+        if (name === "show-percent") this._showPercent = this.hasAttribute("show-percent");
+        if (name === "percent-color") this._percentColor = newVal;
+        if (name === "bg") this._bg = newVal;
+
+        this.render();
+        this.update();
+    }
+    connectedCallback() { 
+        this.render();
+        this.update(); 
+    }
+
+    render() {
         this.shadowRoot.innerHTML = `
-            <style>
+        <style>
                 :host {
                     display: block;
                     width: 100%;
-                    --progress-color: #6366f1;
-                    --progress-height: 16px;
-                    --percent-color: #111;
-                    --progress-bg: #dddddfff;
+                    --progress-color: ${this._color};
+                    --progress-height: ${this._height};
+                    --percent-color: ${this._percentColor};
+                    --progress-bg: ${this._bg};
                     margin-bottom: 8px;
                 }
                 .bar-container {
@@ -55,41 +81,36 @@ class NovaProgressBar extends HTMLElement {
                     margin-top: 4px;
                     color: var(--percent-color);
                     font-size: 0.9em;
+                    display: ${this._showPercent ? "block" : "none"};
                 }
             </style>
             <div class="bar-container">
                 <div class="bar-fill"></div>
             </div>
-            <div class="percent" style="display:none">0%</div>
+            <div class="percent">0%</div>
         `;
+        this._fill = this.shadowRoot.querySelector(".bar-fill");
+        this._percentText = this.shadowRoot.querySelector(".percent");
     }
-
-    connectedCallback() { this.update(); }
-    attributeChangedCallback(name, oldValue, newValue) { if(oldValue !== newValue) this.update(); }
 
     update() {
-        const fill = this.shadowRoot.querySelector(".bar-fill");
-        const percentText = this.shadowRoot.querySelector(".percent");
+        const percent = Math.min(100, (this._value / this._max) * 100);
+        this._fill.style.width = percent + "%";
 
-        const value = parseFloat(this.getAttribute("value")) || 0;
-        const max = parseFloat(this.getAttribute("max")) || 100;
-        const percent = Math.min(100, (value / max) * 100);
-        fill.style.width = percent + "%";
-        
-        if (this.hasAttribute("color")) this.style.setProperty("--progress-color", this.getAttribute("color"));
-        if (this.hasAttribute("height")) this.style.setProperty("--progress-height", this.getAttribute("height"));
-        if (this.hasAttribute("bg")) this.style.setProperty("--progress-bg", this.getAttribute("bg"));
+        this.style.setProperty("--progress-color", this._color);
+        this.style.setProperty("--progress-height", this._height);
+        this.style.setProperty("--progress-bg", this._bg);
+        this.style.setProperty("--percent-color", this._percentColor);
 
-        if (this.hasAttribute("show-percent")) {
-            percentText.style.display = "block";
-            percentText.textContent = Math.round(percent) + "%";
-            if (this.hasAttribute("percent-color")) {
-                this.style.setProperty("--percent-color", this.getAttribute("percent-color"));
-            }
+        if (this._showPercent) {
+            this._percentText.style.display = "block";
+            this._percentText.textContent = Math.round(percent) + "%";
         } else {
-            percentText.style.display = "none";
+            this._percentText.style.display = "none";
         }
     }
+    get value() { return this._value; }
+    set value(val) { this.setAttribute("value", val); }
 }
 
 customElements.define("nova-progressbar", NovaProgressBar);

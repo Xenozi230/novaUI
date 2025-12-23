@@ -18,20 +18,48 @@
 */
 
 class NovaSlider extends HTMLElement {
+    constructor(){
+        super();
+        this.attachShadow({mode:"open"})
+
+        this._min = parseFloat(this.getAttribute("min")) || 0;
+        this._max = parseFloat(this.getAttribute("max")) || 100;
+        this._value = parseFloat(this.getAttribute("value")) || 0;
+        this._step = parseFloat(this.getAttribute("step")) || 1;
+        this._color = this.getAttribute("color") || "#6366f1";
+        this._trackColor = this.getAttribute("track-color") || "#e5e7eb";
+        this._size = this.getAttribute("size") || "medium";
+        this._disabled = this.getAttribute("disabled");
+        this._showValue = this.getAttribute("show-value");
+    }
     static get observedAttributes() {
         return ["min", "max", "value", "step", "color", "track-color", "size", "disabled", "show-value"];
     }
+    attributeChangedCallback(name, oldValue, newValue){
+        if(name === "min") this._min = parseFloat(newValue) || 0;
+        if(name === "max") this._max = parseFloat(newValue) || 100;
+        if(name === "value") this._value = parseFloat(newValue) || 0;
+        if(name === "step") this._step = parseFloat(newValue) || 1;
+        if(name === "color") this._color = newValue;
+        if(name === "track-color") this._trackColor = newValue;
+        if(name === "size") this._size = newValue || "medium";
+        if(name === "disabled") this._disabled = this.hasAttribute("disabled");
+        if(name === "show-value") this._showValue = this.hasAttribute("show-value");
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
+        this.update()
+    }
+    connectedCallback() {
+        this.render()
+        this.update()
+    }
+    render(){
         this.shadowRoot.innerHTML = `
             <style>
                 :host {
                     display: inline-block;
                     width: 200px;
-                    --track-color: #e5e7eb;
-                    --thumb-color: #6366f1;
+                    --track-color: ${this._trackColor};
+                    --thumb-color: ${this._color};
                     --height: 6px;
                 }
 
@@ -43,7 +71,6 @@ class NovaSlider extends HTMLElement {
                     border-radius: 4px;
                     outline: none;
                     cursor: pointer;
-                    transition: background 0.2s;
                 }
 
                 input[type="range"]:disabled {
@@ -57,68 +84,72 @@ class NovaSlider extends HTMLElement {
                     height: 16px;
                     border-radius: 50%;
                     background: var(--thumb-color);
-                    border: none;
                     cursor: pointer;
+                    border: none;
                 }
 
-                .value-display {
-                    text-align: center;
+                .value {
                     margin-top: 4px;
+                    text-align: center;
                     font-size: 0.85em;
                     color: var(--thumb-color);
                     display: none;
                 }
             </style>
-            <input type="range" />
-            <div class="value-display">0</div>
-        `;
-    }
 
-    connectedCallback() {
-        this.update();
-        this.shadowRoot.querySelector("input").addEventListener("input", e => {
-            this.setAttribute("value", e.target.value);
-            this.updateValueDisplay();
-            this.dispatchEvent(new CustomEvent("change", { detail: { value: e.target.value } }));
+            <input type="range" />
+            <div class="value">0</div>
+        `;
+        this._slider = this.shadowRoot.querySelector("input");
+        this._valueLabel = this.shadowRoot.querySelector(".value");
+
+        this._slider.addEventListener("input", () => {
+            this.value = this._slider.value;
+
+            this.dispatchEvent(
+                new CustomEvent("nova-change", {
+                    detail: { value: this._value},
+                    bubbles: true
+                })
+            );
         });
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) this.update();
-    }
-
     update() {
-        const slider = this.shadowRoot.querySelector("input");
-        slider.min = this.getAttribute("min") || 0;
-        slider.max = this.getAttribute("max") || 100;
-        slider.value = this.getAttribute("value") || 0;
-        slider.step = this.getAttribute("step") || 1;
-        slider.disabled = this.hasAttribute("disabled");
+        if (!this._slider) return;
 
-        if (this.hasAttribute("color")) this.style.setProperty("--thumb-color", this.getAttribute("color"));
-        if (this.hasAttribute("track-color")) this.style.setProperty("--track-color", this.getAttribute("track-color"));
-
-        const size = this.getAttribute("size") || "medium";
-        const heights = { 
+        const sizePresets = { 
             small: "4px", 
             medium: "6px", 
             large: "8px", 
             xlarge: "10px" 
         };
-        this.style.setProperty("--height", heights[size] || "6px");
 
-        this.updateValueDisplay();
+        this._slider.min = this._min;
+        this._slider.max = this._max;
+        this._slider.step = this._step;
+        this._slider.value = this._value;
+        this._slider.disabled = this._disabled;
+
+        this.style.setProperty("--thumb-color", this._color);
+        this.style.setProperty("--track-color", this._trackColor);
+        this.style.setProperty("--height", sizePresets[this._size] || "6px");
+
+        if(this._showValue) {
+            this._valueLabel.style.display = "block";
+            this._valueLabel.textContent = this._value;
+        } else {
+            this._valueLabel.style.display = "none";
+        }
     }
 
-    updateValueDisplay() {
-        const valueDisplay = this.shadowRoot.querySelector(".value-display");
-        const slider = this.shadowRoot.querySelector("input");
-        if (this.hasAttribute("show-value")) {
-            valueDisplay.style.display = "block";
-            valueDisplay.textContent = slider.value;
-        } else {
-            valueDisplay.style.display = "none";
-        }
+    get value(){
+        return this._value;
+    }
+
+    set value(val) {
+        this._value = Number(val);
+        this.setAttribute("value", this._value);
     }
 }
 

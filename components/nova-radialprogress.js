@@ -18,42 +18,65 @@
 */
 
 class NovaRadialProgress extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+
+        this._value = parseFloat(this.getAttribute("value")) || 0;
+        this._max = parseFloat(this.getAttribute("max")) || 100;
+        this._size = this.getAttribute("size") || "120px";
+        this._color = this.getAttribute("color") || "#6366f1";
+        this._bg = this.getAttribute("bg") || "#dddddfff";
+        this._stroke = parseInt(this.getAttribute("stroke")) || 10;
+        this._textColor = this.getAttribute("text-color") || "#111827";
+    }
     static get observedAttributes() {
         return ["value", "max", "size", "color", "bg", "stroke", "text-color"];
     }
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    --size: 120px;
-                    --progress-color: #6366f1;
-                    --bg-color: #000000ff;
-                    --stroke-width: 10;
-                    --text-color: #111827;
-                    display: inline-block;
-                }
+    attributeChangedCallback(name, oldValue, newValue) { 
+        if (name === "value") this._value = parseFloat(newValue) || 0;
+        if (name === "max") this._max = parseFloat(newValue) || 100;
+        if (name === "size") this._size = newValue || "120px";
+        if (name === "color") this._color = newValue;
+        if (name === "bg") this._bg = newValue;
+        if (name === "stroke") this._stroke = parseInt(newValue) || 10;
+        if (name === "text-color") this._textColor = newValue;
 
+        this.render();
+        this.update();
+    }
+    connectedCallback() {
+        this.render();
+        this.update();
+    }
+
+    render() {
+        this.shadowRoot.innerHTML = `
+        <style>
+                :host {
+                    display: inline-block;
+                    --size: ${this._size};
+                    --progress-color: ${this._color};
+                    --bg-color: ${this._bg};
+                    --stroke-width: ${this._stroke};
+                    --text-color: ${this._textColor};
+                }
                 .wrapper {
                     position: relative;
                     width: var(--size);
                     height: var(--size);
                 }
-
                 svg {
-                    transform: rotate(-90deg);
                     width: 100%;
                     height: 100%;
+                    transform: rotate(-90deg);
                 }
-
                 circle {
                     fill: none;
                     stroke-width: var(--stroke-width);
                     stroke-linecap: round;
                 }
-
                 .percent {
                     position: absolute;
                     top: 50%;
@@ -61,11 +84,10 @@ class NovaRadialProgress extends HTMLElement {
                     transform: translate(-50%, -50%);
                     font-size: calc(var(--size) * 0.22);
                     font-weight: bold;
-                    font-family: sans-serif;
+                    font-family: system-ui, sans-serif;
                     color: var(--text-color);
                 }
             </style>
-
             <div class="wrapper">
                 <svg>
                     <circle class="bg"></circle>
@@ -74,49 +96,45 @@ class NovaRadialProgress extends HTMLElement {
                 <div class="percent">0%</div>
             </div>
         `;
+
+        this._bgCircle = this.shadowRoot.querySelector(".bg");
+        this._progressCircle = this.shadowRoot.querySelector(".progress");
+        this._percentLabel = this.shadowRoot.querySelector(".percent");
     }
 
-    connectedCallback() { this.update(); }
-    attributeChangedCallback() { this.update(); }
-
     update() {
-        const value = parseFloat(this.getAttribute("value")) || 0;
-        const max = parseFloat(this.getAttribute("max")) || 100;
-        const percent = Math.min(100, (value / max) * 100);
+        if(!this._progressCircle) return;
 
-        const size = this.getAttribute("size") || "120px";
-        const color = this.getAttribute("color") || "#6366f1";
-        const bg = this.getAttribute("bg") || "#dddddfff";
-        const stroke = this.getAttribute("stroke") || 10;
-        const textColor = this.getAttribute("text-color") || "#111827";
-
-        this.style.setProperty("--size", size);
-        this.style.setProperty("--progress-color", color);
-        this.style.setProperty("--bg-color", bg);
-        this.style.setProperty("--stroke-width", stroke);
-        this.style.setProperty("--text-color", textColor);
-
-        const radius = (parseInt(size) / 2) - stroke;
+        const percent = Math.min(100, (this._value / this._max) * 100);
+        const sizePx = parseInt(this._size);
+        const radius = (sizePx / 2) - this._stroke;
         const circumference = radius * 2 * Math.PI;
 
-        const svg = this.shadowRoot.querySelector("svg");
-        const bgCircle = this.shadowRoot.querySelector(".bg");
-        const progressCircle = this.shadowRoot.querySelector(".progress");
-        const percentLabel = this.shadowRoot.querySelector(".percent");
+        this.style.setProperty("--size", this._size);
+        this.style.setProperty("--progress-color", this._color);
+        this.style.setProperty("--bg-color", this._bg);
+        this.style.setProperty("--stroke-width", this._stroke);
+        this.style.setProperty("--text-color", this._textColor);
 
-        bgCircle.setAttribute("cx", size.replace("px", "") / 2);
-        bgCircle.setAttribute("cy", size.replace("px", "") / 2);
-        bgCircle.setAttribute("r", radius);
-        bgCircle.style.stroke = bg;
+        [this._bgCircle, this._progressCircle].forEach(circle => {
+            circle.setAttribute("cx", sizePx / 2);
+            circle.setAttribute("cy", sizePx / 2);
+            circle.setAttribute("r", radius);
+            circle.style.strokeDasharray = circumference;
+        });
 
-        progressCircle.setAttribute("cx", size.replace("px", "") / 2);
-        progressCircle.setAttribute("cy", size.replace("px", "") / 2);
-        progressCircle.setAttribute("r", radius);
-        progressCircle.style.stroke = color;
-        progressCircle.style.strokeDasharray = circumference;
-        progressCircle.style.strokeDashoffset = circumference - (percent / 100) * circumference;
+        this._bgCircle.style.stroke = this._bg;
 
-        percentLabel.textContent = Math.round(percent) + "%";
+        this._progressCircle.style.stroke = this._color;
+        this._progressCircle.style.strokeDashoffset =circumference - (percent / 100) * circumference;
+
+        this._percentLabel.textContent = Math.round(percent) + "%";
+    }
+    get value() {
+        return this._value; 
+    }
+    set value(val) {
+        this.setAttribute("value", val);
     }
 }
 
