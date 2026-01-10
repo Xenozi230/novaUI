@@ -39,7 +39,7 @@ class NovaSpinner extends HTMLElement {
     if (name === "color") this._color = newVal;
     if (name === "thickness") this._thickness = newVal;
     if (name === "speed") this._speed = newVal;
-    this.render();
+    
     this.update();
   }
 

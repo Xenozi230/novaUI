@@ -40,7 +40,6 @@ class NovaCheckbox extends HTMLElement {
         if (name === "size") this._size = newValue;
         if (name === "disabled") this._disabled = this.hasAttribute("disabled");
 
-        this.render();
         this.update();
     }
     connectedCallback() {
@@ -53,7 +52,7 @@ class NovaCheckbox extends HTMLElement {
         <style>
             :host {
             display: inline-block;
-            font-family: system-ui, sans-serif;
+            margin: 2px;
             }
 
             .wrapper {
@@ -80,7 +79,7 @@ class NovaCheckbox extends HTMLElement {
             }
 
             .label {
-            white-space: nowrap;
+            color: ${this._textColor};
             }
         </style>
 

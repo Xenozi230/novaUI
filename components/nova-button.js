@@ -44,7 +44,6 @@ class NovaButton extends HTMLElement {
     if (name === "hover-animated") this._hoverAnimated = this.hasAttribute("hover-animated");
     if (name === "noclick-animated") this._noClickAnimated = this.hasAttribute("noclick-animated");
 
-    this.render();
     this.update();
   }
 
@@ -59,6 +58,7 @@ class NovaButton extends HTMLElement {
         :host {
           display: inline-block;
           font-family: system-ui, sans-serif;
+          margin: 2px;
         }
 
         button {

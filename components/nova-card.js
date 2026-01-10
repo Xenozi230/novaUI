@@ -40,7 +40,6 @@ class NovaCard extends HTMLElement {
     if (name === "background") this._background = newValue;
     if (name === "padding") this._padding = newValue;
 
-    this.render();
     this.update();
   }
   connectedCallback() {

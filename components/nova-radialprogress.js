@@ -43,14 +43,12 @@ class NovaRadialProgress extends HTMLElement {
         if (name === "stroke") this._stroke = parseInt(newValue) || 10;
         if (name === "text-color") this._textColor = newValue;
 
-        this.render();
         this.update();
     }
     connectedCallback() {
         this.render();
         this.update();
     }
-
     render() {
         this.shadowRoot.innerHTML = `
         <style>
@@ -124,18 +122,26 @@ class NovaRadialProgress extends HTMLElement {
         });
 
         this._bgCircle.style.stroke = this._bg;
-
         this._progressCircle.style.stroke = this._color;
         this._progressCircle.style.strokeDashoffset =circumference - (percent / 100) * circumference;
-
         this._percentLabel.textContent = Math.round(percent) + "%";
     }
     get value() {
         return this._value; 
     }
     set value(val) {
-        this.setAttribute("value", val);
+        const newValue = Number(val);
+        if (newValue == this._value) return;
+        this._value = newValue;
+        this.setAttribute("value", newValue);
+
+        this.dispatchEvent(
+            new CustomEvent("nova-change", {
+                detail: { value: this._value },
+                bubbles: true,
+                composed: true,
+            })
+        );
     }
 }
-
 customElements.define("nova-radialprogress", NovaRadialProgress);

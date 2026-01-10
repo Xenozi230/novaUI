@@ -39,9 +39,3 @@ This license governs commercial use of Nova UI after purchase.
 - Governed by French law.
 - Disputes shall be resolved in competent French courts.
 - If any provision is deemed invalid, the remaining terms remain in effect.
-
-7) OBTAINING A COMMERCIAL LICENSE
-
-1. Visit [Your website or Ko-fi link]
-2. Select license type (lifetime or annual)
-3. After payment, receive the obfuscated/commercial version and commercial usage rights.

@@ -41,7 +41,7 @@ class NovaBadge extends HTMLElement {
         if (name === "bg") this._bg = newValue;
         if (name === "rounded") this._rounded = this.hasAttribute("rounded");
         if (name === "variant") this._variant = newValue;
-        this.render();
+
         this.update();
 
     }

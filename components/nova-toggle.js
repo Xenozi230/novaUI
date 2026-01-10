@@ -18,7 +18,7 @@
 */
 
 class NovaToggle extends HTMLElement {
-  constructor() {
+    constructor() {
         super();
         this.attachShadow({ mode: "open" });
 
@@ -27,123 +27,91 @@ class NovaToggle extends HTMLElement {
         this._size = this.getAttribute("size") || "medium";
         this._color = this.getAttribute("color") || "#6366f1";
         this._textColor = this.getAttribute("text-color") || "#000";
+        this._label = this.getAttribute("label") || "test";
     }
 
-  static get observedAttributes() {
-        return ["checked", "disabled", "size"];
+    static get observedAttributes() {
+        return ["checked", "disabled", "size", "color", "text-color", "label"];
     } 
 
-  attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "checked") {
-        this._checked = this.hasAttribute("checked");
-        }
-        if (name === "disabled") {
-        this._disabled = this.hasAttribute("disabled");
-        }
-        if (name === "size") {
-        this._size = newValue;
-        }
-        this.updateVisuals();
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === "checked") this._checked = this.hasAttribute("checked");
+        if (name === "disabled") this._disabled = this.hasAttribute("disabled");
+        if (name === "size") this._size = newValue || "medium";
+        if (name === "color") this._color = newValue;
+        if (name === "text-color") this._textColor = newValue;
+        if (name === "label") this._label = newValue || "";
+        this.update();
     }
 
-  connectedCallback() {
-        const labelTxt = this.getAttribute("label") || "";
+    connectedCallback() {
+        this.render();
+        this.update();
+}
+    render() {
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-block;
+                    --track-color: #ccc;
+                    --active-color: ${this._color};
+                    margin: 2px;
+                }
 
-        const wrapper = document.createElement("div");
-        wrapper.style.cssText = `
-        display:flex;
-        align-items:center;
-        gap:10px;
-        cursor:${this._disabled ? "not-allowed" : "pointer"};
-        user-select:none;
-        margin:2px;
+                .wrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    user-select: none;
+                }
+
+                .track {
+                    position: relative;
+                    border-radius: 999px;
+                    background: var(--track-color);
+                    transition: 0.25s;
+                }
+
+                .thumb {
+                    position: absolute;
+                    top: 2px;
+                    background: white;
+                    border-radius: 50%;
+                    transition: 0.25s;
+                }
+
+                .label {
+                    color: ${this._textColor};
+                }
+            </style>
+
+            <div class="wrapper">
+                <div class="track">
+                    <div class="thumb"></div>
+                </div>
+                <span class="label"></span>
+            </div>
         `;
+        this._wrapper = this.shadowRoot.querySelector(".wrapper");
+        this._track = this.shadowRoot.querySelector(".track");
+        this._thumb = this.shadowRoot.querySelector(".thumb");
+        this._labelEL = this.shadowRoot.querySelector(".label");
 
-        const sizeMap = {
-        small: 30,
-        medium: 40,
-        large: 50,
-        xlarge: 60
-        };
-        const heightMap = {
-        small: 16,
-        medium: 20,
-        large: 24,
-        xlarge: 28
-        };
-        const textSizeMap = {
-            small: "12px",
-            medium: "14px",
-            large: "16px",
-            xlarge: "18px"
-        };
+        this._wrapper.addEventListener("click", () => {
+            if (this._disabled) return;
+            this.checked = !this._checked;
 
-
-        const track = document.createElement("div");
-        track.style.cssText = `
-        width:${sizeMap[this._size] || 40}px;
-        height:${heightMap[this._size] || 20}px;
-        background:${this._checked ? this._color : "#ccc"};
-        border-radius:999px;
-        position:relative;
-        transition:0.25s;
-        box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
-        flex-shrink:0;
-        `;
-
-        const thumb = document.createElement("div");
-        thumb.style.cssText = `
-        width:${(heightMap[this._size] || 20) - 4}px;
-        height:${(heightMap[this._size] || 20) - 4}px;
-        background:white;
-        border-radius:50%;
-        position:absolute;
-        top:2px;
-        left:${this._checked ? `${(sizeMap[this._size] || 40) - (heightMap[this._size] || 20)}px` : "2px"};
-        transition:0.25s;
-        box-shadow:0 2px 4px rgba(0,0,0,0.2);
-        `;
-
-        track.appendChild(thumb);
-
-        const label = document.createElement("span");
-        label.textContent = labelTxt;
-        label.style.cssText = `
-        color:${this._textColor};
-        font-size:14px;
-        `;
-
-        wrapper.appendChild(track);
-        if (labelTxt) wrapper.appendChild(label);
-
-        wrapper.addEventListener("click", () => {
-        if (this._disabled) return;
-        this.toggle();
+            this.dispatchEvent(new CustomEvent("nova-change", {
+                detail: { checked: this._checked },
+                bubbles: true
+            }));
         });
-
-        this.shadowRoot.appendChild(wrapper);
-
-        this._elements = { wrapper, track, thumb, label };
-        this.updateVisuals();
     }
 
-    toggle() {
-        this._checked = !this._checked;
-        this.updateVisuals();
-        this.dispatchEvent(
-        new CustomEvent("nova-change", {
-            detail: { checked: this._checked },
-            bubbles: true
-        })
-        );
-    }
+    update() {
+        if (!this._wrapper) return;
 
-  updateVisuals() {
-        if (!this._elements) return;
-
-        const { wrapper, track, thumb, label } = this._elements;
-
-        const sizeMap = {
+        const widthMap = {
             small: 30,
             medium: 40,
             large: 50,
@@ -162,47 +130,51 @@ class NovaToggle extends HTMLElement {
             xlarge: "18px"
         };
 
-        if (label) {
-            label.style.fontSize = textSizeMap[this._size] || "14px";
+        const w = widthMap[this._size] || 40;
+        const h = heightMap[this._size] || 20;
+        const thumbSize = h - 4;
+
+        this._track.style.width = `${w}px`;
+        this._track.style.height = `${h}px`;
+        this._track.style.background = this._checked ? this._color : "#ccc";
+
+        this._thumb.style.width = `${thumbSize}px`;
+        this._thumb.style.height = `${thumbSize}px`;
+        this._thumb.style.left = this._checked ? `${w - h + 2}px` : "2px";
+
+        this._labelEL.textContent = this._label;
+        this._labelEL.style.fontSize = textSizeMap[this._size] || "14px";
+        this._labelEL.style.display = this._label ? "inline" : "none";
+
+        this._wrapper.style.cursor = this._disabled ? "not-allowed" : "pointer";
+        this._wrapper.style.opacity = this._disabled ? "0.6" : "1";
+
+    }
+    toggle() {
+        if (this.hasAttribute("checked")) {
+            this.removeAttribute("checked");
+        } else {
+            this.setAttribute("checked", "");
         }
 
-        const trackW = sizeMap[this._size] || 40;
-        const trackH = heightMap[this._size] || 20;
-        const thumbSize = trackH - 4;
-
-        track.style.background = this._checked ? this._color : "#ccc";
-
-        thumb.style.left = this._checked
-        ? `${trackW - trackH + 2}px`
-        : "2px";
-
-        thumb.style.width = `${thumbSize}px`;
-        thumb.style.height = `${thumbSize}px`;
-
-        wrapper.style.opacity = this._disabled ? "0.6" : "1";
-        wrapper.style.cursor = this._disabled ? "not-allowed" : "pointer";
-
-        if (this._checked) this.setAttribute("checked", "");
-        else this.removeAttribute("checked");
-
-        if (this._disabled) this.setAttribute("disabled", "");
-        else this.removeAttribute("disabled");
+        this.dispatchEvent(
+            new CustomEvent("nova-change", {
+                detail: { checked: this.hasAttribute("checked") },
+                bubbles: true
+            })
+        );
     }
-
-  get checked() {
+    get checked() {
         return this._checked;
     }
-  set checked(v) {
-        this._checked = Boolean(v);
-        this.updateVisuals();
+    set checked(val) {
+        val ? this.setAttribute("checked", "") : this.removeAttribute("checked");
     }
-
-  get disabled() {
+    get disabled() {
         return this._disabled;
     }
-  set disabled(v) {
-        this._disabled = Boolean(v);
-        this.updateVisuals();
+    set disabled(val) {
+        val ? this.setAttribute("disabled", "") : this.removeAttribute("disabled");
     }
 }
 

@@ -34,15 +34,14 @@ class NovaProgressBar extends HTMLElement {
         return ["value", "max", "color", "height", "show-percent", "percent-color","bg"]; 
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === "value") this._value = parseFloat(newVal) || 0;
-        if (name === "max") this._max = parseFloat(newVal) || 100;
-        if (name === "color") this._color = newVal;
-        if (name === "height") this._height = newVal;
+        if (name === "value") this._value = parseFloat(newValue) || 0;
+        if (name === "max") this._max = parseFloat(newValue) || 100;
+        if (name === "color") this._color = newValue;
+        if (name === "height") this._height = newValue;
         if (name === "show-percent") this._showPercent = this.hasAttribute("show-percent");
-        if (name === "percent-color") this._percentColor = newVal;
-        if (name === "bg") this._bg = newVal;
+        if (name === "percent-color") this._percentColor = newValue;
+        if (name === "bg") this._bg = newValue;
 
-        this.render();
         this.update();
     }
     connectedCallback() { 
@@ -60,7 +59,7 @@ class NovaProgressBar extends HTMLElement {
                     --progress-height: ${this._height};
                     --percent-color: ${this._percentColor};
                     --progress-bg: ${this._bg};
-                    margin-bottom: 8px;
+                    margin: 6px 0;
                 }
                 .bar-container {
                     width: 100%;
@@ -110,7 +109,21 @@ class NovaProgressBar extends HTMLElement {
         }
     }
     get value() { return this._value; }
-    set value(val) { this.setAttribute("value", val); }
+    set value(val) { 
+        const newValue = Number(val);
+        if (newValue === this._value) return;
+
+        this._value = newValue;
+        this.setAttribute("value", newValue);
+
+        this.dispatchEvent(
+            new CustomEvent("nova-change", {
+                detail: { value: this._value },
+                bubbles: true,
+                composed: true,
+            })
+        )
+    }
 }
 
 customElements.define("nova-progressbar", NovaProgressBar);

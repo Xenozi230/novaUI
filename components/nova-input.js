@@ -102,6 +102,12 @@ class NovaInput extends HTMLElement {
         this._wrapper = this.shadowRoot.querySelector(".input-wrapper");
         this._input = this.shadowRoot.querySelector("input");
         this._iconEl = this.shadowRoot.querySelector(".icon");
+
+        this._input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                this._emitChange();
+            }
+        });
     }
     update() {
         if (!this._wrapper) return;
@@ -137,8 +143,24 @@ class NovaInput extends HTMLElement {
         this.style.setProperty("--bg-color", this._bg);
         this.style.setProperty("--focus-color", this._color);
     }   
+    _emitChange() {
+            this._value = this._input.value;
+            this.dispatchEvent(
+                new CustomEvent("nova-change", {
+                    detail: { value: this._value },
+                    bubbles: true
+                })
+            );
+        }
 
     get value() { return this._input.value; }
-    set value(val) { this._value = val; this.setAttribute("value", val); }
+    set value(val) { 
+        this._value = val; 
+        this._input.value = val;
+        this.setAttribute("value", val); 
+
+        this._emitChange();
+
+    }
 }
 customElements.define("nova-input", NovaInput);

@@ -1,7 +1,64 @@
 # Changelog
 
+# 0.3.3 (2026-01-10)
+### End of component architecture refactoring and component event patch
+## NovaToggle
+### Technical Changes
+- Refactored component lifecycle to fully align with Nova UI standards
+- `render()` logic moved entirely to `connectedCallback`
+- Removed all DOM creation from attribute handling
+- Attribute changes now trigger **only visual updates**
+- Internal toggle logic centralized and simplified
 
-## 0.3.2 (2025-12-23)
+### Structure
+- Stable and persistent Shadow DOM structure
+- Track, thumb, and label elements are created **once** and reused
+- No conditional DOM rebuilding on state changes
+- Layout remains consistent regardless of state changes
+
+### State Management
+- Clear separation between:
+  - internal state (`_checked`, `_disabled`, `_size`, `_color`)
+  - external API (HTML attributes)
+- `checked` state is fully synchronized between:
+  - internal state
+  - HTML attribute
+  - visual position
+- Prevented attribute/state desynchronization issues
+
+### Interactions
+- Reliable toggle behavior:
+  - click → state update → visual update
+- `nova-change` event dispatched consistently on user interaction
+- Disabled state fully blocks interaction and visual feedback
+- Smooth animations without layout reflows
+
+### Improvements
+- Improved performance by eliminating unnecessary DOM operations
+- Predictable behavior whether controlled via JS or HTML
+- Cleaner and more maintainable internal logic
+- Architecture fully consistent with other Nova UI form components
+
+
+Nova UI events are based on CustomEvent and use `bubbles: true` so they can be listened to on the component itself or any parent element.
+
+`nova-button` emits the `nova-click` event when the user clicks the button. The event is not emitted if the button is disabled.
+
+`nova-toggle` emits the `nova-change` event when its state changes. The current state is available in `detail.checked`.
+
+`nova-checkbox` emits the `nova-change` event only when the checkbox is checked or unchecked. The state is exposed through `detail.checked`.
+
+`nova-input` emits the `nova-submit` event when the user presses Enter or when a linked button is used. The final value is available in `detail.value`. No event is emitted on each keystroke to improve performance.
+
+`nova-slider` exposes two events. `nova-input` is emitted while the slider is being moved to allow live preview. `nova-change` is emitted only when the user releases the slider and represents the final value.
+
+`nova-progressbar` and `nova-radial-progress` do not emit any user events. They are display-only components and are updated exclusively through attributes or properties (`value`, `max`) for optimal performance.
+
+
+
+
+
+# 0.3.2 (2025-12-23)
 ### Continuation of the component architecture refactoring
 ## NovaInput
 ###  Technical Changes
@@ -117,7 +174,7 @@
 
 
 
-## 0.3.1 (2025-12-22)
+# 0.3.1 (2025-12-22)
 ###  Major Component Architecture Refactor
 ## NovaCard
 ###  Technical Changes
@@ -247,18 +304,18 @@
 - Ideal for labels, status indicators, and counters
 
 
-## 0.3.0 (2025-12-14)
+# 0.3.0 (2025-12-14)
 ### New Components
 * Added `<nova-input>`: configurable text input with `placeholder`, `value`, `type`, `icon`, `color`, `bg`, `size`, `error`, and `disabled` attributes.
 * Added `<nova-badge>`: badge component with `label`, `icon`, `color`, `bg`, `size`, `rounded`, and `variant` attributes.
 * Added `<nova-slider>`: range slider with `min`, `max`, `value`, `step`, `color`, `track-color`, `size`, `disabled`, and `show-value` attributes.
 
-## 0.2.0 (2025-12-07)
+# 0.2.0 (2025-12-07)
 ### New Components
 * Added `<nova-progressbar>`: horizontal progress bar with `value`, `max`, `color`, `bg`, `height`, `show-percent`, and `percent-color` attributes.
 * Added `<nova-radialprogress>`: circular progress indicator with `value`, `max`, `stroke`, `color`, `bg` and `text-color` attributes.
 
-## 0.1.0 (2025-12-06)
+# 0.1.0 (2025-12-06)
 ### Features
 * Initial project setup
 * Added core components and basic architecture

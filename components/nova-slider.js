@@ -104,6 +104,10 @@ class NovaSlider extends HTMLElement {
         this._valueLabel = this.shadowRoot.querySelector(".value");
 
         this._slider.addEventListener("input", () => {
+            this._valueLabel.textContent = this._slider.value;
+        });
+
+        this._slider.addEventListener("change", () => {
             this.value = this._slider.value;
 
             this.dispatchEvent(
