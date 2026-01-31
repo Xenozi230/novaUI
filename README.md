@@ -28,6 +28,8 @@ Nova UI is released under a dual license:
 * `<nova-input>`
 * `<nova-badge>`
 * `<nova-slider>`
+* `<nova-radio>`
+* `<nova-dropdown>`
 
 ## 🛠️ Attributes
 
@@ -178,5 +180,33 @@ Nova UI is released under a dual license:
 <nova-slider min="0" max="100" value="50" step="1" show-value></nova-slider>
 ```
 
+### `<nova-dropdown>`
+* `label` : Text displayed above the dropdown
+* `value` : Currently selected value
+* `color` : Accent color (focus border & active state)
+* `text-color` : Color of the label text
+* `size` : Dropdown height size. Options: `small` , `medium` , `large` , `xlarge`
+* `disabled` : Disables the dropdown
+### Example
+```html
+<nova-dropdown label="Select size" value="medium" color="#6366f1" text-color="#111827" size="medium">
+  <option value="small">Small</option>
+  <option value="medium">Medium</option>
+  <option value="large">Large</option>
+  <option value="xlarge">Extra Large</option>
+</nova-dropdown>
+```
 
-
+### `<nova-radio>`
+* `label` : Text displayed next to the radio button
+* `name` : Radio group name (only one radio can be checked per name)
+* `color` : Color of the active radio dot and border
+* `text-color` : Color of the label text
+* `size` : Radio button size. Options: `small` , `medium` , `large` , `xlarge`
+* `disabled` : Disables the dropdown
+* `checked` : Marks the radio as selected
+### Example
+```html
+<nova-radio name="plan" label="Basic plan" color="#6366f1" text-color="#111827" size="medium" checked></nova-radio>
+<nova-radio name="plan" label="Pro plan" color="#6366f1" size="medium"></nova-radio>
+```

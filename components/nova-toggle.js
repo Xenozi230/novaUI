@@ -145,6 +145,7 @@ class NovaToggle extends HTMLElement {
         this._labelEL.textContent = this._label;
         this._labelEL.style.fontSize = textSizeMap[this._size] || "14px";
         this._labelEL.style.display = this._label ? "inline" : "none";
+        this._labelEL.style.color = this._textColor;
 
         this._wrapper.style.cursor = this._disabled ? "not-allowed" : "pointer";
         this._wrapper.style.opacity = this._disabled ? "0.6" : "1";

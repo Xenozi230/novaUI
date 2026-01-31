@@ -156,5 +156,4 @@ class NovaSlider extends HTMLElement {
         this.setAttribute("value", this._value);
     }
 }
-
 customElements.define("nova-slider", NovaSlider);

@@ -1,4 +1,59 @@
 # Changelog
+# 0.4.0 (2026-01-31)
+## NovaDropdown
+### New Component
+- Fully reactive `label` property, editable in NovaLab
+- Added `text-color` for label customization
+- Size presets (`small`, `medium`, `large`, `xlarge`) adjust height & font size
+- Selected value synced with HTML `value` attribute
+- Live updates in NovaLab properties panel
+
+### Structure
+- Shadow DOM: persistent `<label>` + `<select>`
+- Options cloned from light DOM
+- Label visibility toggled based on property presence
+
+### State Management
+- Internal state: `_value`, `_label`, `_disabled`, `_size`, `_color`, `_textColor`
+- External API synced with attributes
+- Live updates reflected in the UI
+
+### Interactions
+- `nova-change` dispatched on value change
+- Disabled state blocks interaction
+- Fully reactive label updates
+
+### Improvements
+- Predictable behavior via JS or HTML attributes
+- Compatible with NovaLab properties panel
+- Clean, maintainable code ready for 1.0
+
+## NovaRadio
+### New Component
+- Fully reactive `label` with live NovaLab updates
+- Added `text-color` for label customization
+- Size presets (`small`, `medium`, `large`, `xlarge`) adjust radio, dot, and font size
+- Checked state synced across internal state, HTML attribute, visual dot
+
+### Structure
+- Shadow DOM stable: `<input>`, `.radio`, `<span>` for label
+- Label text updated without re-rendering
+- No conditional DOM rebuilding
+
+### State Management
+- Internal state: `_checked`, `_disabled`, `_size`, `_color`, `_textColor`
+- External API synced with attributes
+- Disabled state blocks interaction
+
+### Interactions
+- Click updates state, visual, dispatches `nova-change`
+- Only one radio per `name` can be checked
+- Smooth updates without reflows
+
+### Improvements
+- Fully reactive in NovaLab
+- Live attribute & label updates
+- Optimized logic for 1.0 readiness
 
 # 0.3.3 (2026-01-10)
 ### End of component architecture refactoring and component event patch

@@ -121,12 +121,13 @@ class NovaButton extends HTMLElement {
     const size = sizePresets[this._size] || sizePresets.medium;
 
     this._button.textContent = this._label;
+    this.style.fontSize = `${size.font}px`;
     this._button.disabled = this._disabled;
 
     this._button.className = this._variant;
 
     this._button.style.padding = size.padding;
-    this._button.style.fontSize = size.fontSize;
+    this._button.style.fontSize = size.font;
     this._button.style.borderRadius = size.radius;
 
     this._button.style.setProperty("--main-color", this._color);

@@ -23,7 +23,7 @@ class NovaCheckbox extends HTMLElement {
         this.attachShadow({ mode: "open" });
 
         this._checked = this.hasAttribute("checked");
-        this._label = this.getAttribute("label") || "";
+        this._label = this.getAttribute("label")|| "";
         this._color = this.getAttribute("color") || "#6366f1";
         this._textColor = this.getAttribute("text-color") || "#000";
         this._size = this.getAttribute("size") || "medium";
@@ -34,7 +34,7 @@ class NovaCheckbox extends HTMLElement {
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "checked") this._checked = this.hasAttribute("checked");
-        if (name === "label") this._label = newValue;
+        if (name === "label") this._label = newValue || "";
         if (name === "color") this._color = newValue;
         if (name === "text-color") this._textColor = newValue;
         if (name === "size") this._size = newValue;
@@ -115,6 +115,7 @@ class NovaCheckbox extends HTMLElement {
         this._box.style.width = `${size.box}px`;
         this._box.style.height = `${size.box}px`;
 
+        this._labelEL.textContent = this._label;
         this._labelEL.style.fontSize = `${size.font}px`;
         this._labelEL.style.color = this._textColor;
 
